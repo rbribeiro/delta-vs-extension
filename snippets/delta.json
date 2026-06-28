@@ -12,49 +12,174 @@
       "</document>"
     ]
   },
+  "Chapter": {
+    "prefix": "chapter",
+    "description": "A chapter with a title",
+    "body": ["<chapter id=\"ch:${1:id}\">", "  <title>${2:Title}</title>", "  $0", "</chapter>"]
+  },
   "Section": {
     "prefix": "section",
     "description": "A section with a title",
+    "body": ["<section id=\"sec:${1:id}\">", "  <title>${2:Title}</title>", "  $0", "</section>"]
+  },
+  "Subsection": {
+    "prefix": "subsection",
+    "description": "A subsection with a title",
     "body": [
-      "<section id=\"sec:${1:id}\">",
+      "<subsection id=\"subsec:${1:id}\">",
       "  <title>${2:Title}</title>",
       "  $0",
-      "</section>"
+      "</subsection>"
     ]
+  },
+  "Intro": {
+    "prefix": "intro",
+    "description": "Lead/intro text at the start of a section or chapter",
+    "body": ["<intro>${1:Introductory text.}</intro>$0"]
   },
   "Theorem": {
     "prefix": "theorem",
     "description": "A theorem block",
+    "body": ["<theorem id=\"thm:${1:id}\">", "  <title>${2:Title}</title>", "  $0", "</theorem>"]
+  },
+  "Proposition": {
+    "prefix": "proposition",
+    "description": "A proposition block",
     "body": [
-      "<theorem id=\"thm:${1:id}\">",
+      "<proposition id=\"prop:${1:id}\">",
       "  <title>${2:Title}</title>",
       "  $0",
-      "</theorem>"
+      "</proposition>"
     ]
+  },
+  "Lemma": {
+    "prefix": "lemma",
+    "description": "A lemma block",
+    "body": ["<lemma id=\"lem:${1:id}\">", "  <title>${2:Title}</title>", "  $0", "</lemma>"]
+  },
+  "Corollary": {
+    "prefix": "corollary",
+    "description": "A corollary block",
+    "body": [
+      "<corollary id=\"cor:${1:id}\">",
+      "  <title>${2:Title}</title>",
+      "  $0",
+      "</corollary>"
+    ]
+  },
+  "Definition": {
+    "prefix": "definition",
+    "description": "A definition block",
+    "body": [
+      "<definition id=\"def:${1:id}\">",
+      "  <title>${2:Title}</title>",
+      "  $0",
+      "</definition>"
+    ]
+  },
+  "Proof": {
+    "prefix": "proof",
+    "description": "A proof block",
+    "body": ["<proof>", "  $0", "</proof>"]
   },
   "Equation": {
     "prefix": "equation",
     "description": "A numbered display equation",
     "body": ["<equation id=\"eq:${1:id}\">${2:a^2 + b^2 = c^2}</equation>$0"]
   },
-  "Inline math": {
+  "Equations (aligned)": {
+    "prefix": "equations",
+    "description": "An aligned block of display equations",
+    "body": ["<equations id=\"eq:${1:id}\">", "  ${2:a &= b \\\\\\\\}", "  ${3:  &= c}", "</equations>$0"]
+  },
+  "Inline math element": {
     "prefix": "m",
     "description": "Inline math element",
     "body": ["<m>${1:x}</m>$0"]
   },
-  "Include": {
-    "prefix": "include",
-    "description": "Include another .dlt file",
-    "body": ["<include src=\"${1:chapter.dlt}\" />$0"]
-  },
-  "Import": {
-    "prefix": "import",
-    "description": "Import a package",
-    "body": ["<import pack=\"${1:name}\" />$0"]
-  },
-  "Inline math ($)": {
+  "Display math ($$)": {
     "prefix": "$$",
     "description": "Display math delimiters",
     "body": ["$$${1:a^2 + b^2 = c^2}$$$0"]
+  },
+  "Reference": {
+    "prefix": "ref",
+    "description": "Cross-reference to an element id",
+    "body": ["<ref to=\"${1:thm:id}\" />$0"]
+  },
+  "Citation": {
+    "prefix": "cite",
+    "description": "Citation to a bibliography paper id",
+    "body": ["<cite paper=\"${1:paper:id}\" />$0"]
+  },
+  "Link": {
+    "prefix": "link",
+    "description": "External link",
+    "body": ["<link to=\"${1:https://example.com}\">${2:text}</link>$0"]
+  },
+  "Bibliography placeholder": {
+    "prefix": "bibliography",
+    "description": "Bibliography placeholder (auto-filled with cited papers)",
+    "body": ["<bibliography src=\"${1:source}\" />$0"]
+  },
+  "Paper (bibliography entry)": {
+    "prefix": "paper",
+    "description": "A bibliography entry for a .ref file",
+    "body": [
+      "<paper id=\"${1:key}\">",
+      "  <author>${2:Author}</author>",
+      "  <title>${3:Title}</title>",
+      "  <journal>${4:Journal}</journal>",
+      "  <year>${5:Year}</year>",
+      "</paper>$0"
+    ]
+  },
+  "Figure": {
+    "prefix": "figure",
+    "description": "A figure with a source image and caption",
+    "body": [
+      "<figure src=\"${1:image.png}\" id=\"fig:${2:id}\">",
+      "  <caption>${3:Caption}</caption>",
+      "</figure>$0"
+    ]
+  },
+  "Video": {
+    "prefix": "video",
+    "description": "A video with a source and caption",
+    "body": [
+      "<video src=\"${1:clip.mp4}\" id=\"vid:${2:id}\">",
+      "  <caption>${3:Caption}</caption>",
+      "</video>$0"
+    ]
+  },
+  "YouTube": {
+    "prefix": "youtube",
+    "description": "An embedded YouTube video",
+    "body": ["<youtube id=\"${1:VIDEO_ID}\" />$0"]
+  },
+  "Table of contents": {
+    "prefix": "toc",
+    "description": "Table of contents placeholder",
+    "body": ["<toc />$0"]
+  },
+  "Code (inline)": {
+    "prefix": "cc",
+    "description": "Inline raw code",
+    "body": ["<c>${1:code}</c>$0"]
+  },
+  "Code block": {
+    "prefix": "code",
+    "description": "Block of raw code",
+    "body": ["<code>", "$0", "</code>"]
+  },
+  "Include": {
+    "prefix": "include",
+    "description": "Include another .dlt file",
+    "body": ["<include src=\"${1:chapters/a.dlt}\" />$0"]
+  },
+  "Import": {
+    "prefix": "import",
+    "description": "Import a JavaScript/CSS pack",
+    "body": ["<import src=\"${1:pack}\" />$0"]
   }
 }

@@ -2,17 +2,22 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Delta",
   "scopeName": "text.xml.delta",
-  "patterns": [
-    { "include": "#comments" },
-    { "include": "#cdata" },
-    { "include": "#math-element" },
-    { "include": "#tags" },
-    { "include": "#escaped-dollar" },
-    { "include": "#math-block" },
-    { "include": "#math-inline" },
-    { "include": "#entities" }
-  ],
+  "patterns": [{ "include": "#content" }],
   "repository": {
+    "content": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#cdata" },
+        { "include": "#raw-elements" },
+        { "include": "#math-element" },
+        { "include": "#styled-elements" },
+        { "include": "#tags" },
+        { "include": "#escaped-dollar" },
+        { "include": "#math-block" },
+        { "include": "#math-inline" },
+        { "include": "#entities" }
+      ]
+    },
     "comments": {
       "name": "comment.block.delta",
       "begin": "<!--",
@@ -102,7 +107,7 @@
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.begin.delta" },
         "2": { "name": "entity.name.tag.delta" },
-        "3": { "name": "meta.tag.attributes.delta" },
+        "3": { "patterns": [{ "include": "#tag-attributes" }] },
         "4": { "name": "punctuation.definition.tag.end.delta" }
       },
       "end": "(</)(equations|equation|m)\\s*(>)",
@@ -113,6 +118,121 @@
       },
       "contentName": "meta.embedded.math.delta markup.math.delta",
       "patterns": [{ "include": "#math-content" }]
+    },
+    "raw-elements": {
+      "patterns": [
+        {
+          "begin": "(<)(code|c)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.tag.begin.delta" },
+            "2": { "name": "entity.name.tag.delta" },
+            "3": { "patterns": [{ "include": "#tag-attributes" }] },
+            "4": { "name": "punctuation.definition.tag.end.delta" }
+          },
+          "end": "(</)(code|c)\\s*(>)",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.tag.begin.delta" },
+            "2": { "name": "entity.name.tag.delta" },
+            "3": { "name": "punctuation.definition.tag.end.delta" }
+          },
+          "contentName": "markup.inline.raw.delta",
+          "patterns": [{ "include": "#entities" }]
+        }
+      ]
+    },
+    "styled-elements": {
+      "patterns": [
+        { "include": "#heading-element" },
+        { "include": "#italic-element" },
+        { "include": "#bold-element" },
+        { "include": "#mark-element" },
+        { "include": "#intro-element" }
+      ]
+    },
+    "heading-element": {
+      "begin": "(<)(title)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "patterns": [{ "include": "#tag-attributes" }] },
+        "4": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "end": "(</)(title)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "contentName": "markup.heading.delta",
+      "patterns": [{ "include": "#content" }]
+    },
+    "italic-element": {
+      "begin": "(<)(em|i)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "patterns": [{ "include": "#tag-attributes" }] },
+        "4": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "end": "(</)(em|i)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "contentName": "markup.italic.delta",
+      "patterns": [{ "include": "#content" }]
+    },
+    "bold-element": {
+      "begin": "(<)(b)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "patterns": [{ "include": "#tag-attributes" }] },
+        "4": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "end": "(</)(b)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "contentName": "markup.bold.delta",
+      "patterns": [{ "include": "#content" }]
+    },
+    "mark-element": {
+      "begin": "(<)(mark)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "patterns": [{ "include": "#tag-attributes" }] },
+        "4": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "end": "(</)(mark)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "contentName": "markup.highlight.delta",
+      "patterns": [{ "include": "#content" }]
+    },
+    "intro-element": {
+      "begin": "(<)(intro)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "patterns": [{ "include": "#tag-attributes" }] },
+        "4": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "end": "(</)(intro)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "contentName": "markup.quote.delta",
+      "patterns": [{ "include": "#content" }]
     },
     "math-block": {
       "name": "meta.embedded.math.block.delta markup.math.block.delta",

@@ -127,7 +127,23 @@
           "type": "string",
           "default": "out",
           "markdownDescription": "Output directory for project builds, relative to the `project.toml`."
+        },
+        "delta.autoCloseTags": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Automatically insert a matching close tag when you finish an opening tag with `>` (e.g. `<theorem id=\"thm\">` inserts `</theorem>`)."
         }
+      }
+    },
+    "configurationDefaults": {
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          { "scope": "markup.heading.delta", "settings": { "fontStyle": "bold", "foreground": "#6f5cff" } },
+          { "scope": "markup.bold.delta", "settings": { "fontStyle": "bold" } },
+          { "scope": "markup.italic.delta", "settings": { "fontStyle": "italic" } },
+          { "scope": "markup.highlight.delta", "settings": { "fontStyle": "bold", "foreground": "#b58900" } },
+          { "scope": "markup.quote.delta", "settings": { "fontStyle": "italic", "foreground": "#2aa198" } }
+        ]
       }
     }
   },

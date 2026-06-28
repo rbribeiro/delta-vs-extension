@@ -4,6 +4,7 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { readConfig } from './config';
 import { resolveDeltaCommand, outputPathFor, buildWatchArgs } from './deltaCli';
 import { findProjectToml, loadProject, projectIncludes } from './project';
+import { getShellPath } from './shellEnv';
 
 export interface BuildResult {
   /** Stable key of the watcher that produced this result (per-file or per-project). */
@@ -63,9 +64,12 @@ export class BuildManager implements vscode.Disposable {
   readonly onBuild = this._onBuild.event;
   private readonly channel: vscode.OutputChannel;
   private warnedMissingBinary = false;
+  /** Login-shell PATH (so mise/asdf/nvm/Homebrew binaries resolve); resolved once, cached. */
+  private readonly envPath: Promise<string | undefined>;
 
   constructor() {
     this.channel = vscode.window.createOutputChannel('Delta');
+    this.envPath = getShellPath();
   }
 
   /** Compiled HTML path a document maps to, without starting anything. */
@@ -74,24 +78,33 @@ export class BuildManager implements vscode.Disposable {
   }
 
   /** Ensure a watch build is running for the document; returns its output HTML path. */
-  ensureWatching(doc: vscode.TextDocument): string {
+  async ensureWatching(doc: vscode.TextDocument): Promise<string> {
     const target = this.resolveTarget(doc);
+    const docKey = doc.uri.toString();
     let proc = this.processes.get(target.key);
     if (!proc?.alive) {
-      proc = this.startWatch(target);
-      this.processes.set(target.key, proc);
+      const started = await this.startWatch(target);
+      // Guard against a concurrent ensureWatching having created one while we awaited PATH.
+      proc = this.processes.get(target.key);
+      if (proc?.alive) {
+        started.child.removeAllListeners();
+        started.child.kill();
+      } else {
+        proc = started;
+        this.processes.set(target.key, proc);
+      }
     }
-    proc.refs.add(doc.uri.toString());
+    proc.refs.add(docKey);
     return target.outputHtmlFor(doc.uri.fsPath);
   }
 
   /** Restart the watcher for a document's target, preserving its references. */
-  restart(doc: vscode.TextDocument): string {
+  async restart(doc: vscode.TextDocument): Promise<string> {
     const target = this.resolveTarget(doc);
     const existing = this.processes.get(target.key);
     const refs = existing ? new Set(existing.refs) : new Set<string>();
     this.stopByKey(target.key);
-    const proc = this.startWatch(target);
+    const proc = await this.startWatch(target);
     proc.refs = refs;
     proc.refs.add(doc.uri.toString());
     this.processes.set(target.key, proc);
@@ -159,7 +172,7 @@ export class BuildManager implements vscode.Disposable {
     };
   }
 
-  private startWatch(target: BuildTarget): ManagedProcess {
+  private async startWatch(target: BuildTarget): Promise<ManagedProcess> {
     const config = readConfig(vscode.Uri.file(target.inputPath));
     const workspaceRoot = vscode.workspace.getWorkspaceFolder(
       vscode.Uri.file(target.inputPath)
@@ -167,8 +180,11 @@ export class BuildManager implements vscode.Disposable {
     const resolved = resolveDeltaCommand(config.path, workspaceRoot);
     const args = buildWatchArgs(target.inputPath, target.outputArg);
 
+    const pathEnv = await this.envPath;
+    const env = pathEnv ? { ...process.env, PATH: pathEnv } : process.env;
+
     this.channel.appendLine(`$ ${resolved.command} ${args.join(' ')}`);
-    const child = spawn(resolved.command, args, { cwd: target.cwd, shell: false });
+    const child = spawn(resolved.command, args, { cwd: target.cwd, shell: false, env });
     const proc: ManagedProcess = { child, target, refs: new Set(), buffer: '', alive: true };
 
     const onData = (data: Buffer) => {
@@ -225,7 +241,9 @@ export class BuildManager implements vscode.Disposable {
       this.warnedMissingBinary = true;
       void vscode.window
         .showErrorMessage(
-          `Could not run the delta CLI ('${command}'). Install it with 'npm i -g delta-lang' or set 'delta.path'.`,
+          `Could not run the delta CLI ('${command}'). Install it with 'npm i -g delta-lang', ` +
+            `or set 'delta.path' to its absolute path. If delta is managed by a version manager ` +
+            `(mise/asdf/nvm), launching VS Code from a terminal also makes it visible.`,
           'Open Settings'
         )
         .then((choice) => {

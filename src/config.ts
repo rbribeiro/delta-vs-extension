@@ -13,6 +13,8 @@ export interface DeltaConfig {
   projectEnabled: boolean;
   /** Output directory for project builds, relative to the project.toml. */
   projectOutputDir: string;
+  /** Auto-insert a matching close tag when an opening tag is completed with `>`. */
+  autoCloseTags: boolean;
 }
 
 export function readConfig(scope?: vscode.Uri): DeltaConfig {
@@ -23,6 +25,7 @@ export function readConfig(scope?: vscode.Uri): DeltaConfig {
     previewPort: c.get<number>('preview.port', 0),
     openOnBuild: c.get<boolean>('preview.openOnBuild', false),
     projectEnabled: c.get<boolean>('project.enabled', true),
-    projectOutputDir: c.get<string>('project.outputDirectory', 'out')
+    projectOutputDir: c.get<string>('project.outputDirectory', 'out'),
+    autoCloseTags: c.get<boolean>('autoCloseTags', true)
   };
 }
