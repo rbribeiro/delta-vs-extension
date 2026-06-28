@@ -5,10 +5,29 @@
   "version": "0.0.1",
   "publisher": "rbribeiro",
   "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#f4efe7",
+    "theme": "light"
+  },
+  "keywords": [
+    "delta",
+    "delta-lang",
+    "dlt",
+    "latex",
+    "markup",
+    "katex",
+    "academic",
+    "preview"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/rbribeiro/delta-vs-extension"
+    "url": "https://github.com/rbribeiro/delta-vs-extension.git"
   },
+  "bugs": {
+    "url": "https://github.com/rbribeiro/delta-vs-extension/issues"
+  },
+  "homepage": "https://github.com/rbribeiro/delta-vs-extension#readme",
   "engines": {
     "vscode": "^1.85.0"
   },

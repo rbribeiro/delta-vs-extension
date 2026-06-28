@@ -11,3 +11,7 @@ tsconfig.json
 .vscodeignore
 **/*.map
 **/*.ts
+CLAUDE.md
+images/*.svg
+.claude/**
+.vscode-test/**
