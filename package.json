@@ -1,0 +1,133 @@
+{
+  "name": "delta-lang",
+  "displayName": "Delta Lang",
+  "description": "Syntax highlighting, build-on-save, and live preview for the delta-lang markup language (.dlt).",
+  "version": "0.0.1",
+  "publisher": "rbribeiro",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rbribeiro/delta-vs-extension"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "delta",
+        "aliases": [
+          "Delta",
+          "delta-lang"
+        ],
+        "extensions": [
+          ".dlt"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "delta",
+        "scopeName": "text.xml.delta",
+        "path": "./syntaxes/delta.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "delta",
+        "path": "./snippets/delta.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "delta.openPreview",
+        "title": "Delta: Open Preview",
+        "category": "Delta"
+      },
+      {
+        "command": "delta.restartWatcher",
+        "title": "Delta: Restart Watcher",
+        "category": "Delta"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "delta.openPreview",
+          "when": "resourceLangId == delta",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "delta.openPreview",
+          "when": "resourceLangId == delta"
+        },
+        {
+          "command": "delta.restartWatcher",
+          "when": "resourceLangId == delta"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Delta",
+      "properties": {
+        "delta.path": {
+          "type": "string",
+          "default": "delta",
+          "markdownDescription": "Path or command for the `delta` CLI binary. When left as `delta`, the extension first looks for a workspace-local `node_modules/.bin/delta`, then falls back to `delta` on the system PATH."
+        },
+        "delta.buildOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start a `delta build --watch` process when a .dlt file is opened, so the HTML recompiles on every save."
+        },
+        "delta.preview.port": {
+          "type": "number",
+          "default": 0,
+          "description": "Port for the local preview server. 0 picks a free port automatically."
+        },
+        "delta.preview.openOnBuild": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically open the preview the first time a document is built."
+        },
+        "delta.project.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When a `.dlt` has an ancestor `project.toml` that lists it in `inputs`, build the whole project (a shared watcher) instead of that file alone."
+        },
+        "delta.project.outputDirectory": {
+          "type": "string",
+          "default": "out",
+          "markdownDescription": "Output directory for project builds, relative to the `project.toml`."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "lint": "eslint src --ext ts",
+    "test": "node --test \"dist/test/**/*.test.js\"",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.0"
+  }
+}

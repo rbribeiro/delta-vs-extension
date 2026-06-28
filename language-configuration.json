@@ -1,0 +1,39 @@
+{
+  "comments": {
+    "blockComment": ["<!--", "-->"]
+  },
+  "brackets": [
+    ["<", ">"],
+    ["{", "}"],
+    ["(", ")"],
+    ["[", "]"]
+  ],
+  "autoClosingPairs": [
+    { "open": "<!--", "close": "-->", "notIn": ["comment", "string"] },
+    { "open": "{", "close": "}" },
+    { "open": "(", "close": ")" },
+    { "open": "[", "close": "]" },
+    { "open": "\"", "close": "\"" },
+    { "open": "'", "close": "'" },
+    { "open": "$", "close": "$", "notIn": ["string"] }
+  ],
+  "surroundingPairs": [
+    ["{", "}"],
+    ["(", ")"],
+    ["[", "]"],
+    ["\"", "\""],
+    ["'", "'"],
+    ["$", "$"]
+  ],
+  "onEnterRules": [
+    {
+      "beforeText": "<([_:\\w][_:\\w\\-.\\d]*)(?:\\s+[^>]*)?(?<!/)>\\s*$",
+      "afterText": "^\\s*</([_:\\w][_:\\w\\-.\\d]*)>$",
+      "action": { "indent": "indentOutdent" }
+    },
+    {
+      "beforeText": "<([_:\\w][_:\\w\\-.\\d]*)(?:\\s+[^>]*)?(?<!/)>\\s*$",
+      "action": { "indent": "indent" }
+    }
+  ]
+}

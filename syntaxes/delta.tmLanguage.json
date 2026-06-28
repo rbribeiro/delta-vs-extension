@@ -1,0 +1,167 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Delta",
+  "scopeName": "text.xml.delta",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#cdata" },
+    { "include": "#math-element" },
+    { "include": "#tags" },
+    { "include": "#escaped-dollar" },
+    { "include": "#math-block" },
+    { "include": "#math-inline" },
+    { "include": "#entities" }
+  ],
+  "repository": {
+    "comments": {
+      "name": "comment.block.delta",
+      "begin": "<!--",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.comment.begin.delta" }
+      },
+      "end": "-->",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.comment.end.delta" }
+      }
+    },
+    "cdata": {
+      "name": "string.unquoted.cdata.delta",
+      "begin": "<!\\[CDATA\\[",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.tag.begin.delta" }
+      },
+      "end": "\\]\\]>",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.tag.end.delta" }
+      }
+    },
+    "entities": {
+      "name": "constant.character.entity.delta",
+      "match": "&(?:#[0-9]+|#x[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);"
+    },
+    "escaped-dollar": {
+      "name": "constant.character.escape.delta",
+      "match": "\\\\\\$"
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.delta",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.delta" }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.delta" }
+          },
+          "patterns": [{ "include": "#entities" }]
+        },
+        {
+          "name": "string.quoted.single.delta",
+          "begin": "'",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.delta" }
+          },
+          "end": "'",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.delta" }
+          },
+          "patterns": [{ "include": "#entities" }]
+        }
+      ]
+    },
+    "tag-attributes": {
+      "patterns": [
+        {
+          "match": "([_:a-zA-Z][-_:.a-zA-Z0-9]*)\\s*(=)",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.delta" },
+            "2": { "name": "punctuation.separator.key-value.delta" }
+          }
+        },
+        { "include": "#strings" }
+      ]
+    },
+    "tags": {
+      "name": "meta.tag.delta",
+      "begin": "(</?)([_:a-zA-Z][-_:.a-zA-Z0-9]*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "patterns": [{ "include": "#tag-attributes" }]
+    },
+    "math-element": {
+      "name": "meta.tag.math.delta",
+      "begin": "(<)(equations|equation|m)((?:\\s+[^<>]*?)?)(?<!/)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "meta.tag.attributes.delta" },
+        "4": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "end": "(</)(equations|equation|m)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.delta" },
+        "2": { "name": "entity.name.tag.delta" },
+        "3": { "name": "punctuation.definition.tag.end.delta" }
+      },
+      "contentName": "meta.embedded.math.delta markup.math.delta",
+      "patterns": [{ "include": "#math-content" }]
+    },
+    "math-block": {
+      "name": "meta.embedded.math.block.delta markup.math.block.delta",
+      "begin": "(?<!\\\\)(\\$\\$)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.string.math.begin.delta" }
+      },
+      "end": "(\\$\\$)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.string.math.end.delta" }
+      },
+      "patterns": [{ "include": "#math-content" }]
+    },
+    "math-inline": {
+      "name": "meta.embedded.math.inline.delta markup.math.inline.delta",
+      "begin": "(?<!\\\\)(\\$)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.string.math.begin.delta" }
+      },
+      "end": "(?<!\\\\)(\\$)|$",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.string.math.end.delta" }
+      },
+      "patterns": [{ "include": "#math-content" }]
+    },
+    "math-content": {
+      "patterns": [
+        { "include": "#escaped-dollar" },
+        {
+          "name": "constant.character.escape.delta",
+          "match": "\\\\[\\\\{}$&%#_^~]"
+        },
+        {
+          "name": "support.function.delta",
+          "match": "\\\\[a-zA-Z@]+"
+        },
+        {
+          "name": "keyword.operator.math.delta",
+          "match": "[\\^_]"
+        },
+        {
+          "name": "punctuation.definition.group.delta",
+          "match": "[{}]"
+        },
+        {
+          "name": "comment.line.percentage.delta",
+          "match": "%.*$"
+        }
+      ]
+    }
+  }
+}

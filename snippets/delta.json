@@ -1,0 +1,60 @@
+{
+  "Delta document": {
+    "prefix": "document",
+    "description": "Top-level delta document scaffold",
+    "body": [
+      "<document lang=\"${1:en}\" type=\"${2|paper,book,presentation|}\">",
+      "  <title>${3:Title}</title>",
+      "  <section id=\"sec:${4:intro}\">",
+      "    <title>${5:Introduction}</title>",
+      "    $0",
+      "  </section>",
+      "</document>"
+    ]
+  },
+  "Section": {
+    "prefix": "section",
+    "description": "A section with a title",
+    "body": [
+      "<section id=\"sec:${1:id}\">",
+      "  <title>${2:Title}</title>",
+      "  $0",
+      "</section>"
+    ]
+  },
+  "Theorem": {
+    "prefix": "theorem",
+    "description": "A theorem block",
+    "body": [
+      "<theorem id=\"thm:${1:id}\">",
+      "  <title>${2:Title}</title>",
+      "  $0",
+      "</theorem>"
+    ]
+  },
+  "Equation": {
+    "prefix": "equation",
+    "description": "A numbered display equation",
+    "body": ["<equation id=\"eq:${1:id}\">${2:a^2 + b^2 = c^2}</equation>$0"]
+  },
+  "Inline math": {
+    "prefix": "m",
+    "description": "Inline math element",
+    "body": ["<m>${1:x}</m>$0"]
+  },
+  "Include": {
+    "prefix": "include",
+    "description": "Include another .dlt file",
+    "body": ["<include src=\"${1:chapter.dlt}\" />$0"]
+  },
+  "Import": {
+    "prefix": "import",
+    "description": "Import a package",
+    "body": ["<import pack=\"${1:name}\" />$0"]
+  },
+  "Inline math ($)": {
+    "prefix": "$$",
+    "description": "Display math delimiters",
+    "body": ["$$${1:a^2 + b^2 = c^2}$$$0"]
+  }
+}

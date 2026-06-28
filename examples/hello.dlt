@@ -1,0 +1,18 @@
+<document lang="en" type="paper">
+  <title>Hello, Delta</title>
+
+  <section id="sec:intro">
+    <title>Introduction</title>
+
+    <!-- Inline math renders with KaTeX at compile time. -->
+    Euler's identity $e^{i\pi} + 1 = 0$ just works, and a literal dollar \$5 stays literal.
+
+    Display math:
+    $$\int_0^1 x^2 \, dx = \frac{1}{3}$$
+
+    <theorem id="thm:pyth">
+      <title>Pythagorean Theorem</title>
+      <equation id="eq:pyth">a^2 + b^2 = c^2</equation>
+    </theorem>
+  </section>
+</document>

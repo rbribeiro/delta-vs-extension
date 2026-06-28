@@ -1,0 +1,11 @@
+<document lang="en" type="book">
+  <title>Chapter Two</title>
+
+  <section id="sec:more">
+    <title>Theorems</title>
+    <theorem id="thm:euler">
+      <title>Euler's Identity</title>
+      <equation id="eq:euler">e^{i\pi} + 1 = 0</equation>
+    </theorem>
+  </section>
+</document>

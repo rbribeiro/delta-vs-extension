@@ -1,0 +1,8 @@
+<document lang="en" type="book">
+  <title>Introduction</title>
+
+  <section id="sec:intro">
+    <title>Why Delta</title>
+    A book is just a <m>project.toml</m> with a few chapters. Inline math $\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}$ renders inline.
+  </section>
+</document>

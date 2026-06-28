@@ -1,0 +1,9 @@
+node_modules/
+dist/
+out/
+*.vsix
+CLAUDE.md
+
+# Compiled delta output sits next to the .dlt source; don't commit build artifacts.
+*.html
+!examples/**/*.expected.html

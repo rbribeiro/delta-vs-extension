@@ -1,0 +1,6 @@
+title = "A Small Delta Book"
+
+inputs = [
+  "intro.dlt",
+  "chapter2.dlt",
+]
