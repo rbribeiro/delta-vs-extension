@@ -145,18 +145,26 @@ export class BuildManager implements vscode.Disposable {
       const tomlPath = findProjectToml(path.dirname(dltPath), workspaceRoot);
       if (tomlPath) {
         const info = loadProject(tomlPath);
-        if (projectIncludes(info, dltPath)) {
-          const outputDir = path.resolve(info.projectDir, config.projectOutputDir);
-          return {
-            key: `project:${tomlPath}`,
-            inputPath: tomlPath,
-            outputArg: outputDir,
-            isProject: true,
-            cwd: info.projectDir,
-            sourceUris: info.inputs.map((p) => vscode.Uri.file(p)),
-            outputHtmlFor: (p) => path.join(outputDir, `${path.basename(p, path.extname(p))}.html`)
-          };
-        }
+        // Any .dlt under a project.toml belongs to that project — never build it standalone
+        // (an <include> partial isn't in `inputs` but is still a project file). delta's watcher
+        // tracks the full dependency graph, so editing any member rebuilds the project.
+        // The toml's `out` wins; the extension setting is only a fallback when it's absent.
+        const outputDir = path.resolve(info.projectDir, info.out ?? config.projectOutputDir);
+        const pageFor = (p: string) => path.join(outputDir, `${path.basename(p, path.extname(p))}.html`);
+        return {
+          key: `project:${tomlPath}`,
+          inputPath: tomlPath,
+          outputArg: outputDir,
+          isProject: true,
+          cwd: info.projectDir,
+          sourceUris: info.inputs.map((p) => vscode.Uri.file(p)),
+          // Inputs map to their own page; a non-input (partial) has no page of its own, so
+          // fall back to the first input's output for preview/preview-follow.
+          outputHtmlFor: (p) =>
+            projectIncludes(info, p) || info.inputs.length === 0
+              ? pageFor(p)
+              : pageFor(info.inputs[0])
+        };
       }
     }
 

@@ -26,6 +26,27 @@ npm i -g delta-lang
 The extension looks for a workspace-local `node_modules/.bin/delta` first, then falls back
 to `delta` on your PATH. Override with the `delta.path` setting.
 
+## Install from source
+
+The extension isn't on the Marketplace yet — build a `.vsix` from this repo and install it
+into VS Code:
+
+```
+npm install
+npx @vscode/vsce package                        # → delta-lang-0.0.1.vsix
+code --install-extension delta-lang-0.0.1.vsix
+```
+
+`vsce package` runs the production bundle automatically. Then reload VS Code (Command
+Palette → *Developer: Reload Window*). You can also install the `.vsix` from the Extensions
+view: the `⋯` menu → **Install from VSIX…**.
+
+> Adjust the filename to match the version in [package.json](package.json) if it differs.
+> `code --install-extension` needs VS Code's `code` command on your PATH (in VS Code, run
+> *Shell Command: Install 'code' command in PATH* once).
+
+To hack on the extension rather than install it, see [Development](#development) below.
+
 ## Settings
 
 | Setting | Default | Description |

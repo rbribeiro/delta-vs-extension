@@ -17,6 +17,8 @@ export interface ProjectInfo {
   projectDir: string;
   /** Absolute paths of the project's input .dlt files. */
   inputs: string[];
+  /** The toml's `out` key (raw, relative to projectDir), or undefined when absent. */
+  out?: string;
 }
 
 /** Extract the `inputs = [...]` string entries from a project.toml's contents. */
@@ -32,6 +34,16 @@ export function parseInputs(toml: string): string[] {
     entries.push(m[2]);
   }
   return entries;
+}
+
+/**
+ * Extract the top-level `out = "..."` string value from a project.toml (delta's project
+ * output directory). Returns undefined when the key is absent so callers can fall back to the
+ * extension's own setting. A trailing `# comment` after the value is ignored.
+ */
+export function parseOut(toml: string): string | undefined {
+  const m = /^[ \t]*out[ \t]*=[ \t]*(["'])(.*?)\1/m.exec(toml);
+  return m ? m[2] : undefined;
 }
 
 /**
@@ -74,12 +86,15 @@ export function loadProject(
 ): ProjectInfo {
   const projectDir = path.dirname(tomlPath);
   let inputs: string[] = [];
+  let out: string | undefined;
   try {
-    inputs = parseInputs(read(tomlPath)).map((rel) => path.resolve(projectDir, rel));
+    const toml = read(tomlPath);
+    inputs = parseInputs(toml).map((rel) => path.resolve(projectDir, rel));
+    out = parseOut(toml);
   } catch {
     inputs = [];
   }
-  return { tomlPath, projectDir, inputs };
+  return { tomlPath, projectDir, inputs, out };
 }
 
 /** True when `dltPath` is one of the project's inputs. */

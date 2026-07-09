@@ -1,13 +1,22 @@
 import { test } from 'node:test';
 import * as assert from 'node:assert';
 import * as path from 'path';
-import { parseInputs, findProjectToml, loadProject, projectIncludes } from './project';
+import { parseInputs, parseOut, findProjectToml, loadProject, projectIncludes } from './project';
 
 test('parseInputs reads a single-line inputs array', () => {
   assert.deepEqual(parseInputs('inputs = ["intro.dlt", "chapter2.dlt"]'), [
     'intro.dlt',
     'chapter2.dlt'
   ]);
+});
+
+test('parseOut reads the out key, ignoring a trailing comment', () => {
+  assert.equal(parseOut('inputs = ["a.dlt"]\nout = "site"   # output dir'), 'site');
+  assert.equal(parseOut("out = 'build'"), 'build');
+});
+
+test('parseOut returns undefined when there is no out key', () => {
+  assert.equal(parseOut('inputs = ["a.dlt"]'), undefined);
 });
 
 test('parseInputs reads a multi-line inputs array with trailing comma', () => {
@@ -48,4 +57,12 @@ test('loadProject resolves inputs relative to the toml dir and checks membership
   ]);
   assert.ok(projectIncludes(info, path.join('/ws', 'b.dlt')));
   assert.ok(!projectIncludes(info, path.join('/ws', 'c.dlt')));
+});
+
+test('loadProject surfaces the out key when present, undefined otherwise', () => {
+  const toml = path.join('/ws', 'project.toml');
+  const withOut = loadProject(toml, () => 'inputs = ["a.dlt"]\nout = "site"');
+  assert.equal(withOut.out, 'site');
+  const withoutOut = loadProject(toml, () => 'inputs = ["a.dlt"]');
+  assert.equal(withoutOut.out, undefined);
 });

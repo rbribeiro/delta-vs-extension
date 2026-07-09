@@ -121,12 +121,12 @@
         "delta.project.enabled": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "When a `.dlt` has an ancestor `project.toml` that lists it in `inputs`, build the whole project (a shared watcher) instead of that file alone."
+          "markdownDescription": "When a `.dlt` has an ancestor `project.toml`, build the whole project (a shared watcher) instead of that file alone. Applies to every `.dlt` under the project, including `<include>` partials not listed in `inputs`."
         },
         "delta.project.outputDirectory": {
           "type": "string",
           "default": "out",
-          "markdownDescription": "Output directory for project builds, relative to the `project.toml`."
+          "markdownDescription": "Fallback output directory for project builds, relative to the `project.toml`. A `project.toml` that sets its own `out` key takes precedence; this setting is only used when the toml omits `out`."
         },
         "delta.autoCloseTags": {
           "type": "boolean",
