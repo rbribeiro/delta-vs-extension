@@ -37,8 +37,10 @@ interface BuildTarget {
   isProject: boolean;
   cwd: string;
   sourceUris: vscode.Uri[];
-  /** Map a source .dlt to its compiled HTML path. */
+  /** Map a source .dlt to a compiled HTML page to preview (a partial falls back to a real page). */
   outputHtmlFor: (dltPath: string) => string;
+  /** The .dlt's *own* compiled page, or undefined when it has none (an `<include>` partial). */
+  ownPageFor: (dltPath: string) => string | undefined;
 }
 
 interface ManagedProcess {
@@ -72,9 +74,14 @@ export class BuildManager implements vscode.Disposable {
     this.envPath = getShellPath();
   }
 
-  /** Compiled HTML path a document maps to, without starting anything. */
-  outputPathFor(doc: vscode.TextDocument): string {
-    return this.resolveTarget(doc).outputHtmlFor(doc.uri.fsPath);
+  /**
+   * The compiled page the preview should switch to when this document is saved, or `undefined`
+   * when it has no page of its own (an `<include>` partial). For a partial we deliberately return
+   * undefined so the preview stays on the page it's showing and live-reloads in place, rather than
+   * being yanked to the project's first page.
+   */
+  followTargetFor(doc: vscode.TextDocument): string | undefined {
+    return this.resolveTarget(doc).ownPageFor(doc.uri.fsPath);
   }
 
   /** Ensure a watch build is running for the document; returns its output HTML path. */
@@ -151,6 +158,8 @@ export class BuildManager implements vscode.Disposable {
         // The toml's `out` wins; the extension setting is only a fallback when it's absent.
         const outputDir = path.resolve(info.projectDir, info.out ?? config.projectOutputDir);
         const pageFor = (p: string) => path.join(outputDir, `${path.basename(p, path.extname(p))}.html`);
+        // An input compiles to its own page; a non-input (an <include> partial) does not.
+        const hasOwnPage = (p: string) => projectIncludes(info, p) || info.inputs.length === 0;
         return {
           key: `project:${tomlPath}`,
           inputPath: tomlPath,
@@ -158,12 +167,11 @@ export class BuildManager implements vscode.Disposable {
           isProject: true,
           cwd: info.projectDir,
           sourceUris: info.inputs.map((p) => vscode.Uri.file(p)),
-          // Inputs map to their own page; a non-input (partial) has no page of its own, so
-          // fall back to the first input's output for preview/preview-follow.
-          outputHtmlFor: (p) =>
-            projectIncludes(info, p) || info.inputs.length === 0
-              ? pageFor(p)
-              : pageFor(info.inputs[0])
+          // Preview always needs *some* page: a partial falls back to the first input's.
+          outputHtmlFor: (p) => (hasOwnPage(p) ? pageFor(p) : pageFor(info.inputs[0])),
+          // Preview-follow must not invent a page: a partial returns undefined so the preview
+          // stays put and live-reloads in place instead of jumping to the first input.
+          ownPageFor: (p) => (hasOwnPage(p) ? pageFor(p) : undefined)
         };
       }
     }
@@ -176,7 +184,8 @@ export class BuildManager implements vscode.Disposable {
       isProject: false,
       cwd: path.dirname(dltPath),
       sourceUris: [doc.uri],
-      outputHtmlFor: () => outputPath
+      outputHtmlFor: () => outputPath,
+      ownPageFor: () => outputPath
     };
   }
 

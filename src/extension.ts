@@ -27,10 +27,14 @@ export function activate(context: vscode.ExtensionContext): void {
       }
 
       // Make the preview follow the document the user just saved: once its output is rebuilt,
-      // tell the preview to switch to that page (a no-op if it's already showing it).
+      // tell the preview to switch to that page (a no-op if it's already showing it). An
+      // `<include>` partial has no page of its own — its edit surfaces inside another page —
+      // so we don't navigate; the live-reload above refreshes whatever page is showing.
       if (followDoc) {
-        const followOutput = builds.outputPathFor(followDoc);
-        if (result.outputPaths.includes(followOutput)) {
+        const followOutput = builds.followTargetFor(followDoc);
+        if (!followOutput) {
+          followDoc = undefined;
+        } else if (result.outputPaths.includes(followOutput)) {
           preview.navigate(followOutput);
           followDoc = undefined;
         }
